@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Birthday Surprise ✨</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Quicksand:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blush: #ffb6c1;
+    --rose: #ff85a1;
+    --deep-rose: #e8476a;
+    --petal: #ffd6e0;
+    --cream: #fff5f7;
+    --lilac: #e8d5f5;
+    --gold: #ffd700;
+    --peach: #ffcba4;
+    --mint: #b5ead7;
+    --sky: #c7e9fb;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Quicksand', sans-serif;
+    background: #fff5f7;
+    user-select: none;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .screen.hidden { opacity: 0; pointer-events: none; transform: scale(0.95); }
+
+  /* ─── CANVAS LAYER ─── */
+  #particleCanvas {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ══════════════════════════════════════
+     SCREEN 1 – NAME INPUT
+  ══════════════════════════════════════ */
+  #screen-input {
+    background: linear-gradient(135deg, #ffe0ec 0%, #ffd6e7 30%, #e8d5f5 70%, #d5eaff 100%);
+    z-index: 10;
+  }
+
+  .bg-sparkles {
+    position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  }
+  .bg-spark {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    animation: floatSpark linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes floatSpark {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.8; }
+    100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+  }
+
+  .input-card {
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(255,182,193,0.5);
+    border-radius: 32px;
+    padding: 52px 48px 48px;
+    text-align: center;
+    box-shadow:
+      0 8px 40px rgba(255,133,161,0.18),
+      0 2px 8px rgba(255,133,161,0.1),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+    max-width: 420px; width: 90%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .crown-emoji {
+    font-size: 52px;
+    animation: crownBob 2.5s ease-in-out infinite;
+    display: block; margin-bottom: 8px;
+    filter: drop-shadow(0 4px 12px rgba(255,215,0,0.5));
+  }
+  @keyframes crownBob {
+    0%,100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+  }
+
+  .input-card h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.1rem);
+    color: #c2185b;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .input-card p {
+    color: #e879a0;
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  #nameInput {
+    width: 100%;
+    padding: 16px 22px;
+    border-radius: 50px;
+    border: 2px solid #ffb6c1;
+    background: rgba(255,255,255,0.9);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #c2185b;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    letter-spacing: 0.5px;
+  }
+  #nameInput::placeholder { color: #ffb6c1; font-weight: 500; }
+  #nameInput:focus {
+    border-color: #ff85a1;
+    box-shadow: 0 0 0 4px rgba(255,133,161,0.2), 0 0 20px rgba(255,133,161,0.3);
+  }
+
+  #startBtn {
+    margin-top: 24px;
+    width: 100%;
+    padding: 17px 32px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, #ff85a1, #e8476a);
+    color: white;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.8px;
+    box-shadow: 0 6px 24px rgba(232,71,106,0.4), 0 2px 8px rgba(232,71,106,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  #startBtn::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent);
+    border-radius: 50px;
+  }
+  #startBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(232,71,106,0.5), 0 4px 12px rgba(232,71,106,0.3);
+  }
+  #startBtn:active { transform: translateY(0) scale(0.97); }
+
+  /* ══════════════════════════════════════
+     SCREEN 2 – GIFT BOX
+  ══════════════════════════════════════ */
+  #screen-gift {
+    background: linear-gradient(160deg, #1a0a14 0%, #2d0a1e 40%, #1a0014 100%);
+    z-index: 9;
+  }
+
+  .gift-instruction {
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    color: rgba(255,200,220,0.9);
+    font-weight: 600;
+    margin-bottom: 48px;
+    letter-spacing: 1px;
+    text-align: center;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.7;} 50%{opacity:1;} }
+
+  .gift-wrapper {
+    position: relative;
+    cursor: pointer;
+    width: 220px; height: 220px;
+    margin: 0 auto;
+  }
+
+  /* Glow ring */
+  .gift-glow {
+    position: absolute; inset: -30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,100,150,0.4) 0%, transparent 70%);
+    animation: glowPulse 2s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes glowPulse {
+    0%,100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.15); opacity: 1; }
+  }
+
+  /* Gift SVG container */
+  .gift-svg-wrap {
+    width: 220px; height: 220px;
+    position: relative; z-index: 2;
+    transition: filter 0.15s;
+    transform-origin: center bottom;
+  }
+
+  .gift-svg-wrap.shake {
+    animation: giftShake 0.3s ease;
+  }
+  @keyframes giftShake {
+    0%   { transform: rotate(0); }
+    20%  { transform: rotate(-4deg) scale(1.03); }
+    40%  { transform: rotate(4deg) scale(1.05); }
+    60%  { transform: rotate(-3deg) scale(1.04); }
+    80%  { transform: rotate(3deg) scale(1.02); }
+    100% { transform: rotate(0) scale(1); }
+  }
+
+  /* Crack lines overlay */
+  .crack-overlay {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  /* ══════════════════════════════════════
+     SCREEN 3 – EXPLOSION (handled via canvas + transition)
+  ══════════════════════════════════════ */
+
+  /* ══════════════════════════════════════
+     SCREEN 4 – BIRTHDAY MESSAGE
+  ══════════════════════════════════════ */
+  #screen-message {
+    background: linear-gradient(160deg, #fff0f5 0%, #ffe4f0 40%, #f5e6ff 100%);
+    z-index: 8;
+    overflow: hidden;
+  }
+
+  .message-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .hb-line1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 7vw, 4.5rem);
+    color: #d81b60;
+    line-height: 1.1;
+    display: block;
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+    transition: none;
+    text-shadow: 0 4px 20px rgba(216,27,96,0.3);
+  }
+  .hb-name {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(2.4rem, 9vw, 6rem);
+    background: linear-gradient(135deg, #ff85a1, #e8476a, #9c27b0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    opacity: 0;
+    transform: scale(0.3);
+    transition: none;
+    filter: drop-shadow(0 4px 12px rgba(232,71,106,0.4));
+  }
+
+  .hb-line1.pop  { animation: popIn 0.7s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
+  .hb-name.pop   { animation: popIn 0.8s cubic-bezier(0.175,0.885,0.32,1.275) 0.3s forwards; }
+
+  @keyframes popIn {
+    0%   { opacity:0; transform: scale(0.3) translateY(20px); }
+    60%  { opacity:1; transform: scale(1.08) translateY(-4px); }
+    100% { opacity:1; transform: scale(1) translateY(0); }
+  }
+
+  /* ─── CAKE ─── */
+  .cake-container {
+    margin-top: 40px;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease 1.2s, transform 0.8s ease 1.2s;
+  }
+  .cake-container.show { opacity: 1; transform: translateY(0); }
+
+  .cake-svg { width: clamp(140px, 30vw, 200px); filter: drop-shadow(0 8px 24px rgba(255,133,161,0.5)); }
+
+  /* candle flames */
+  .flame { animation: flicker 0.5s ease-in-out infinite alternate; transform-origin: bottom center; }
+  .flame:nth-child(2) { animation-delay: 0.1s; animation-duration: 0.4s; }
+  .flame:nth-child(3) { animation-delay: 0.2s; animation-duration: 0.6s; }
+  .flame:nth-child(4) { animation-delay: 0.05s; }
+  .flame:nth-child(5) { animation-delay: 0.15s; animation-duration: 0.45s; }
+  @keyframes flicker {
+    0%   { transform: scaleY(1) scaleX(1) rotate(-1deg); opacity: 0.9; }
+    100% { transform: scaleY(1.2) scaleX(0.85) rotate(1deg); opacity: 1; }
+  }
+
+  /* ─── FLOATING HEARTS / BALLOONS on message screen ─── */
+  .float-el {
+    position: absolute;
+    font-size: 1.8rem;
+    animation: floatUp linear infinite;
+    pointer-events: none;
+    bottom: -60px;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    5%   { opacity: 1; }
+    90%  { opacity: 0.8; }
+    100% { transform: translateY(-110vh) rotate(20deg); opacity: 0; }
+  }
+
+  /* ─── BALLOONS ─── */
+  .balloon {
+    position: absolute;
+    bottom: -120px;
+    animation: balloonRise linear forwards;
+    pointer-events: none;
+    opacity: 0;
+  }
+  @keyframes balloonRise {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    5%   { opacity: 1; }
+    100% { transform: translateY(-130vh) translateX(var(--sway)); opacity: 0; }
+  }
+
+  /* Glitter dots */
+  .glitter {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: glitterFall linear infinite;
+  }
+  @keyframes glitterFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Confetti */
+  .confetti-piece {
+    position: absolute;
+    top: -20px;
+    width: 8px; height: 14px;
+    border-radius: 2px;
+    animation: confettiFall linear infinite;
+    pointer-events: none;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg) translateX(var(--drift)); opacity: 0.3; }
+  }
+
+  /* Light orbs */
+  .light-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+    animation: orbDrift ease-in-out infinite alternate;
+    opacity: 0.35;
+  }
+  @keyframes orbDrift {
+    0%   { transform: translate(0,0); }
+    100% { transform: translate(var(--dx), var(--dy)); }
+  }
+
+  /* Shooting star / firework spark */
+  .firework {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    animation: fwExplode ease-out forwards;
+  }
+  @keyframes fwExplode {
+    0%   { transform: scale(0); opacity: 1; }
+    60%  { opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 480px) {
+    .input-card { padding: 40px 28px 36px; }
+    .gift-wrapper { width: 180px; height: 180px; }
+    .gift-svg-wrap { width: 180px; height: 180px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PARTICLE CANVAS -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- ══════════════════════════
+     SCREEN 1 – NAME INPUT
+══════════════════════════ -->
+<div id="screen-input" class="screen">
+  <div class="bg-sparkles" id="bgSparkles"></div>
+
+  <div class="input-card">
+    <span class="crown-emoji">👑</span>
+    <h1>A Magical Surprise<br>Awaits You</h1>
+    <p>Enter your name to begin your journey ✨</p>
+    <input id="nameInput" type="text" placeholder="Your beautiful name…" maxlength="20" autocomplete="off" />
+    <button id="startBtn">✨ Start Surprise ✨</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     SCREEN 2 – GIFT BOX
+══════════════════════════ -->
+<div id="screen-gift" class="screen hidden">
+  <p class="gift-instruction">✨ Tap the Gift to Open Your Surprise ✨</p>
+
+  <div class="gift-wrapper" id="giftWrapper">
+    <div class="gift-glow" id="giftGlow"></div>
+
+    <!-- Gift SVG -->
+    <div class="gift-svg-wrap" id="giftSvgWrap">
+      <svg id="giftSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+        <defs>
+          <radialGradient id="boxGrad" cx="35%" cy="35%">
+            <stop offset="0%" stop-color="#ff6fa0"/>
+            <stop offset="100%" stop-color="#c2185b"/>
+          </radialGradient>
+          <radialGradient id="lidGrad" cx="35%" cy="35%">
+            <stop offset="0%" stop-color="#ff85b3"/>
+            <stop offset="100%" stop-color="#d81b60"/>
+          </radialGradient>
+          <filter id="neonGlow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="ribbonV" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffd700"/>
+            <stop offset="100%" stop-color="#ff9800"/>
+          </linearGradient>
+          <linearGradient id="ribbonH" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ffd700"/>
+            <stop offset="100%" stop-color="#ff9800"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Box body -->
+        <rect x="28" y="95" width="144" height="95" rx="6" fill="url(#boxGrad)" stroke="#ff4081" stroke-width="1.5"/>
+        <!-- Box side shading -->
+        <rect x="28" y="95" width="144" height="95" rx="6" fill="url(#boxGrad)" opacity="0"/>
+        <polygon points="172,95 186,108 186,186 172,190" fill="rgba(0,0,0,0.18)" rx="2"/>
+        <!-- Box lid -->
+        <rect x="20" y="78" width="160" height="26" rx="6" fill="url(#lidGrad)" stroke="#ff4081" stroke-width="1.5"/>
+        <!-- Ribbon vertical on box -->
+        <rect x="91" y="95" width="18" height="95" fill="url(#ribbonV)" opacity="0.9"/>
+        <!-- Ribbon horizontal on lid -->
+        <rect x="20" y="84" width="160" height="10" fill="url(#ribbonH)" opacity="0.9"/>
+        <!-- Bow left loop -->
+        <ellipse cx="82" cy="66" rx="28" ry="16" fill="#ffd700" transform="rotate(-30,82,66)" opacity="0.95"/>
+        <ellipse cx="82" cy="66" rx="20" ry="10" fill="#ffb300" transform="rotate(-30,82,66)" opacity="0.5"/>
+        <!-- Bow right loop -->
+        <ellipse cx="118" cy="66" rx="28" ry="16" fill="#ffd700" transform="rotate(30,118,66)" opacity="0.95"/>
+        <ellipse cx="118" cy="66" rx="20" ry="10" fill="#ffb300" transform="rotate(30,118,66)" opacity="0.5"/>
+        <!-- Bow center knot -->
+        <circle cx="100" cy="72" r="12" fill="#ffc107"/>
+        <circle cx="100" cy="72" r="7" fill="#ff8f00"/>
+        <!-- Stars decorating box -->
+        <text x="50" y="150" font-size="18" fill="rgba(255,255,255,0.35)" text-anchor="middle">★</text>
+        <text x="150" y="140" font-size="14" fill="rgba(255,255,255,0.25)" text-anchor="middle">★</text>
+        <text x="100" y="180" font-size="12" fill="rgba(255,255,255,0.2)" text-anchor="middle">★</text>
+      </svg>
+
+      <!-- Crack overlay SVG -->
+      <svg class="crack-overlay" id="crackOverlay" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#ff1a4a" stroke-width="1.5" fill="none" opacity="0.7">
+          <polyline points="60,95 50,120 65,130 48,160"/>
+          <polyline points="140,105 155,115 142,135 160,155"/>
+          <polyline points="90,95 85,110 95,118 80,140"/>
+          <polyline points="110,105 118,125 108,130 120,150"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     SCREEN 4 – BIRTHDAY MESSAGE
+══════════════════════════ -->
+<div id="screen-message" class="screen hidden">
+  <!-- ambient orbs -->
+  <div class="light-orb" style="width:300px;height:300px;background:#ffb6c1;top:-80px;left:-100px;--dx:60px;--dy:40px;animation-duration:8s;"></div>
+  <div class="light-orb" style="width:250px;height:250px;background:#e1bee7;bottom:-60px;right:-80px;--dx:-40px;--dy:-30px;animation-duration:10s;"></div>
+  <div class="light-orb" style="width:180px;height:180px;background:#bbdefb;bottom:20%;left:5%;--dx:30px;--dy:50px;animation-duration:7s;"></div>
+
+  <div class="message-content">
+    <span class="hb-line1" id="hbLine1">Happy Birthday</span>
+    <span class="hb-name" id="hbName">✨ Name ✨</span>
+
+    <!-- Cake -->
+    <div class="cake-container" id="cakeContainer">
+      <svg class="cake-svg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="cakeBot" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffb6c1"/>
+            <stop offset="100%" stop-color="#ff85a1"/>
+          </linearGradient>
+          <linearGradient id="cakeMid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffd6e0"/>
+            <stop offset="100%" stop-color="#ffb6c1"/>
+          </linearGradient>
+          <linearGradient id="cakeTop" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fff0f5"/>
+            <stop offset="100%" stop-color="#ffd6e0"/>
+          </linearGradient>
+          <linearGradient id="frostingGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ffe4ed"/>
+            <stop offset="50%" stop-color="#fff5f8"/>
+            <stop offset="100%" stop-color="#ffe4ed"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Bottom tier -->
+        <rect x="20" y="120" width="160" height="52" rx="6" fill="url(#cakeBot)"/>
+        <rect x="20" y="120" width="160" height="10" rx="3" fill="url(#frostingGrad)"/>
+        <!-- drips -->
+        <ellipse cx="45" cy="124" rx="8" ry="10" fill="white" opacity="0.8"/>
+        <ellipse cx="80" cy="126" rx="7" ry="9" fill="white" opacity="0.8"/>
+        <ellipse cx="120" cy="124" rx="9" ry="11" fill="white" opacity="0.8"/>
+        <ellipse cx="160" cy="125" rx="7" ry="9" fill="white" opacity="0.8"/>
+        <!-- dots -->
+        <circle cx="55" cy="140" r="5" fill="#ff85a1" opacity="0.6"/>
+        <circle cx="100" cy="145" r="4" fill="#c2185b" opacity="0.5"/>
+        <circle cx="145" cy="138" r="5" fill="#ff85a1" opacity="0.6"/>
+
+        <!-- Middle tier -->
+        <rect x="38" y="82" width="124" height="44" rx="5" fill="url(#cakeMid)"/>
+        <rect x="38" y="82" width="124" height="9" rx="3" fill="url(#frostingGrad)"/>
+        <ellipse cx="60" cy="86" rx="7" ry="8" fill="white" opacity="0.8"/>
+        <ellipse cx="100" cy="87" rx="8" ry="9" fill="white" opacity="0.8"/>
+        <ellipse cx="140" cy="85" rx="7" ry="8" fill="white" opacity="0.8"/>
+        <circle cx="80" cy="105" r="4" fill="#d81b60" opacity="0.5"/>
+        <circle cx="120" cy="100" r="5" fill="#ff85a1" opacity="0.6"/>
+        <text x="100" y="112" text-anchor="middle" font-size="13" fill="rgba(194,24,91,0.7)" font-family="Quicksand,sans-serif" font-weight="700">♡ Happy Birthday ♡</text>
+
+        <!-- Top tier -->
+        <rect x="58" y="50" width="84" height="36" rx="5" fill="url(#cakeTop)"/>
+        <rect x="58" y="50" width="84" height="8" rx="3" fill="url(#frostingGrad)"/>
+        <ellipse cx="75" cy="54" rx="6" ry="7" fill="white" opacity="0.85"/>
+        <ellipse cx="100" cy="55" rx="7" ry="8" fill="white" opacity="0.85"/>
+        <ellipse cx="125" cy="53" rx="6" ry="7" fill="white" opacity="0.85"/>
+        <circle cx="85" cy="70" r="3" fill="#ff4081" opacity="0.6"/>
+        <circle cx="115" cy="68" r="3" fill="#ff4081" opacity="0.6"/>
+
+        <!-- Candles (5) -->
+        <rect x="68" y="32" width="8" height="22" rx="3" fill="#ff85a1"/>
+        <rect x="82" y="30" width="8" height="24" rx="3" fill="#ffd700"/>
+        <rect x="96" y="28" width="8" height="26" rx="3" fill="#ff6fa0"/>
+        <rect x="110" y="30" width="8" height="24" rx="3" fill="#a5d6a7"/>
+        <rect x="124" y="32" width="8" height="22" rx="3" fill="#ce93d8"/>
+
+        <!-- Flames -->
+        <ellipse class="flame" cx="72" cy="30" rx="5" ry="8" fill="#ffd700" opacity="0.9"/>
+        <ellipse class="flame" cx="72" cy="28" rx="3" ry="5" fill="#ff8f00"/>
+        <ellipse class="flame" cx="86" cy="28" rx="5" ry="8" fill="#ffd700" opacity="0.9"/>
+        <ellipse class="flame" cx="86" cy="26" rx="3" ry="5" fill="#ff8f00"/>
+        <ellipse class="flame" cx="100" cy="26" rx="5" ry="8" fill="#ffd700" opacity="0.9"/>
+        <ellipse class="flame" cx="100" cy="24" rx="3" ry="5" fill="#ff8f00"/>
+        <ellipse class="flame" cx="114" cy="28" rx="5" ry="8" fill="#ffd700" opacity="0.9"/>
+        <ellipse class="flame" cx="114" cy="26" rx="3" ry="5" fill="#ff8f00"/>
+        <ellipse class="flame" cx="128" cy="30" rx="5" ry="8" fill="#ffd700" opacity="0.9"/>
+        <ellipse class="flame" cx="128" cy="28" rx="3" ry="5" fill="#ff8f00"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let userName = '';
+let tapCount = 0;
+const TAP_REQUIRED = 50;
+let giftExploded = false;
+
+// ═══════════════════════════════════════════════════
+//  CANVAS PARTICLES
+// ═══════════════════════════════════════════════════
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor(x, y, type) {
+    this.x = x ?? Math.random() * canvas.width;
+    this.y = y ?? -10;
+    this.type = type || 'glitter'; // glitter | confetti | spark | explosion | balloon | heart | firework
+    this.reset(x, y);
+  }
+
+  reset(x, y) {
+    this.x = x !== undefined ? x : Math.random() * canvas.width;
+    this.y = y !== undefined ? y : -10;
+    this.size = Math.random() * 6 + 2;
+    this.speedX = (Math.random() - 0.5) * 3;
+    this.speedY = Math.random() * 2 + 0.5;
+    this.opacity = Math.random() * 0.8 + 0.2;
+    this.life = 1;
+    this.decay = Math.random() * 0.008 + 0.003;
+    this.rotation = Math.random() * Math.PI * 2;
+    this.rotSpeed = (Math.random() - 0.5) * 0.15;
+
+    const colors = ['#ff85a1','#ffb6c1','#ffd700','#e8476a','#c2185b','#ffc0cb','#ff69b4','#f48fb1','#ce93d8','#90caf9','#a5d6a7','#fff176'];
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+
+    if (this.type === 'explosion') {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 12 + 4;
+      this.speedX = Math.cos(angle) * speed;
+      this.speedY = Math.sin(angle) * speed;
+      this.gravity = 0.25;
+      this.decay = Math.random() * 0.018 + 0.008;
+      this.size = Math.random() * 10 + 4;
+    } else if (this.type === 'spark') {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 5 + 2;
+      this.speedX = Math.cos(angle) * speed;
+      this.speedY = Math.sin(angle) * speed - 2;
+      this.gravity = 0.15;
+      this.decay = Math.random() * 0.03 + 0.02;
+      this.size = Math.random() * 5 + 2;
+    } else if (this.type === 'firework') {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 8 + 3;
+      this.speedX = Math.cos(angle) * speed;
+      this.speedY = Math.sin(angle) * speed;
+      this.gravity = 0.08;
+      this.decay = Math.random() * 0.012 + 0.005;
+      this.size = Math.random() * 4 + 2;
+      this.tail = [];
+    } else if (this.type === 'balloon') {
+      this.x = Math.random() * canvas.width;
+      this.y = canvas.height + 60;
+      this.speedX = (Math.random() - 0.5) * 0.8;
+      this.speedY = -(Math.random() * 1.5 + 0.8);
+      this.size = Math.random() * 20 + 25;
+      this.decay = 0.001;
+      this.wobble = Math.random() * Math.PI * 2;
+      this.wobbleSpeed = Math.random() * 0.04 + 0.01;
+      const ballColors = ['#ff85a1','#ffd700','#ce93d8','#90caf9','#a5d6a7','#ffcba4','#ff6fa0'];
+      this.color = ballColors[Math.floor(Math.random() * ballColors.length)];
+    } else if (this.type === 'heart') {
+      this.x = Math.random() * canvas.width;
+      this.y = canvas.height + 20;
+      this.speedX = (Math.random() - 0.5) * 0.5;
+      this.speedY = -(Math.random() * 1.2 + 0.4);
+      this.size = Math.random() * 16 + 10;
+      this.decay = 0.001;
+    }
+  }
+
+  update() {
+    if (this.type === 'balloon') {
+      this.wobble += this.wobbleSpeed;
+      this.x += Math.sin(this.wobble) * 0.8 + this.speedX;
+      this.y += this.speedY;
+    } else {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if (this.gravity) this.speedY += this.gravity;
+    }
+    this.rotation += this.rotSpeed;
+    this.life -= this.decay;
+    this.opacity = this.life;
+
+    if (this.type === 'firework' && this.tail) {
+      this.tail.push({ x: this.x, y: this.y });
+      if (this.tail.length > 6) this.tail.shift();
+    }
+  }
+
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, this.opacity);
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
+
+    if (this.type === 'confetti') {
+      ctx.fillStyle = this.color;
+      ctx.fillRect(-this.size / 2, -this.size / 3, this.size, this.size / 1.8);
+
+    } else if (this.type === 'balloon') {
+      // Draw balloon
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.size * 0.75, this.size, 0, 0, Math.PI * 2);
+      const grad = ctx.createRadialGradient(-this.size * 0.2, -this.size * 0.3, 1, 0, 0, this.size);
+      grad.addColorStop(0, 'rgba(255,255,255,0.6)');
+      grad.addColorStop(0.4, this.color);
+      grad.addColorStop(1, this.color + 'aa');
+      ctx.fillStyle = grad;
+      ctx.fill();
+      // knot
+      ctx.beginPath();
+      ctx.arc(0, this.size + 3, 4, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+      // string
+      ctx.beginPath();
+      ctx.moveTo(0, this.size + 7);
+      ctx.bezierCurveTo(5, this.size + 25, -5, this.size + 40, 3, this.size + 55);
+      ctx.strokeStyle = 'rgba(180,180,180,0.6)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+    } else if (this.type === 'heart') {
+      ctx.fillStyle = this.color || '#ff85a1';
+      const s = this.size * 0.055;
+      ctx.beginPath();
+      ctx.moveTo(0, s * 3);
+      ctx.bezierCurveTo(-s * 3, -s * 2, -s * 9, s, 0, s * 8);
+      ctx.bezierCurveTo(s * 9, s, s * 3, -s * 2, 0, s * 3);
+      ctx.fill();
+
+    } else if (this.type === 'firework' && this.tail) {
+      for (let i = 0; i < this.tail.length; i++) {
+        const t = this.tail[i];
+        const a = (i / this.tail.length) * 0.5;
+        ctx.globalAlpha = a * Math.max(0, this.opacity);
+        ctx.beginPath();
+        ctx.arc(t.x - this.x, t.y - this.y, this.size * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+      ctx.globalAlpha = Math.max(0, this.opacity);
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size * 0.6, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+
+    } else {
+      // glitter / spark / explosion
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = this.color;
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  isDead() {
+    return this.life <= 0 || this.y > canvas.height + 100 || this.y < -100 || this.x < -100 || this.x > canvas.width + 100;
+  }
+}
+
+// Continuous ambient particles
+let ambientMode = 'input'; // 'input' | 'gift' | 'celebrate'
+
+function spawnAmbient() {
+  if (ambientMode === 'celebrate') {
+    // Glitter
+    if (Math.random() < 0.4) {
+      const p = new Particle(Math.random() * canvas.width, -10, 'glitter');
+      particles.push(p);
+    }
+    // Confetti
+    if (Math.random() < 0.3) {
+      const p = new Particle(Math.random() * canvas.width, -10, 'confetti');
+      particles.push(p);
+    }
+    // Balloons
+    if (Math.random() < 0.015) {
+      particles.push(new Particle(null, null, 'balloon'));
+    }
+    // Hearts
+    if (Math.random() < 0.02) {
+      particles.push(new Particle(null, null, 'heart'));
+    }
+    // Fireworks
+    if (Math.random() < 0.008) {
+      const fw = new Particle(Math.random() * canvas.width, Math.random() * canvas.height * 0.7, 'firework');
+      for (let i = 0; i < 25; i++) {
+        const p = new Particle(fw.x, fw.y, 'firework');
+        particles.push(p);
+      }
+    }
+  }
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  spawnAmbient();
+  particles = particles.filter(p => !p.isDead());
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ═══════════════════════════════════════════════════
+//  BG SPARKLES (Input Screen)
+// ═══════════════════════════════════════════════════
+const bgSparkles = document.getElementById('bgSparkles');
+const sparkColors = ['#ff85a1','#ffd700','#e8476a','#c2185b','#ffd6e0','#ce93d8','#90caf9'];
+for (let i = 0; i < 55; i++) {
+  const el = document.createElement('div');
+  el.className = 'bg-spark';
+  el.style.left = Math.random() * 100 + '%';
+  el.style.width = el.style.height = (Math.random() * 8 + 3) + 'px';
+  el.style.background = sparkColors[Math.floor(Math.random() * sparkColors.length)];
+  el.style.animationDuration = (Math.random() * 8 + 5) + 's';
+  el.style.animationDelay = (Math.random() * 8) + 's';
+  el.style.boxShadow = `0 0 6px 2px ${sparkColors[Math.floor(Math.random() * sparkColors.length)]}`;
+  bgSparkles.appendChild(el);
+}
+
+// ═══════════════════════════════════════════════════
+//  SCREEN TRANSITIONS
+// ═══════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  const target = document.getElementById(id);
+  target.classList.remove('hidden');
+}
+
+// ═══════════════════════════════════════════════════
+//  SCREEN 1 → SCREEN 2
+// ═══════════════════════════════════════════════════
+document.getElementById('startBtn').addEventListener('click', () => {
+  const val = document.getElementById('nameInput').value.trim();
+  if (!val) {
+    document.getElementById('nameInput').style.animation = 'none';
+    document.getElementById('nameInput').focus();
+    document.getElementById('nameInput').style.borderColor = '#e8476a';
+    document.getElementById('nameInput').style.boxShadow = '0 0 0 4px rgba(232,71,106,0.3)';
+    setTimeout(() => {
+      document.getElementById('nameInput').style.borderColor = '';
+      document.getElementById('nameInput').style.boxShadow = '';
+    }, 1500);
+    return;
+  }
+  userName = val;
+  document.getElementById('nameInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('startBtn').click();
+  });
+  showScreen('screen-gift');
+  ambientMode = 'gift';
+});
+
+document.getElementById('nameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('startBtn').click();
+});
+
+// ═══════════════════════════════════════════════════
+//  GIFT TAPPING LOGIC
+// ═══════════════════════════════════════════════════
+const giftWrapper = document.getElementById('giftWrapper');
+const giftSvgWrap = document.getElementById('giftSvgWrap');
+const giftGlow = document.getElementById('giftGlow');
+const crackOverlay = document.getElementById('crackOverlay');
+
+function emitSparks(x, y, count = 12) {
+  for (let i = 0; i < count; i++) {
+    const p = new Particle(x, y, 'spark');
+    particles.push(p);
+  }
+}
+
+function emitExplosion(x, y) {
+  const types = ['explosion','confetti','glitter'];
+  for (let i = 0; i < 120; i++) {
+    const type = types[Math.floor(Math.random() * types.length)];
+    const p = new Particle(x, y, type);
+    particles.push(p);
+  }
+  // Balloons burst
+  for (let i = 0; i < 12; i++) {
+    setTimeout(() => {
+      particles.push(new Particle(null, null, 'balloon'));
+    }, i * 150);
+  }
+  // Fireworks
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      const fx = Math.random() * canvas.width;
+      const fy = Math.random() * canvas.height * 0.6;
+      for (let j = 0; j < 30; j++) {
+        const fw = new Particle(fx, fy, 'firework');
+        particles.push(fw);
+      }
+    }, i * 300 + 100);
+  }
+}
+
+function handleGiftTap(e) {
+  if (giftExploded) return;
+  e.preventDefault();
+  tapCount++;
+
+  // Get tap position for sparks
+  const rect = giftWrapper.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+
+  // Emit sparks
+  emitSparks(cx, cy, 8 + Math.floor(tapCount / 10) * 3);
+
+  // Shake animation
+  giftSvgWrap.classList.remove('shake');
+  void giftSvgWrap.offsetWidth; // reflow
+  giftSvgWrap.classList.add('shake');
+
+  // Progressive glow
+  const intensity = tapCount / TAP_REQUIRED;
+  const glowSize = 30 + intensity * 80;
+  const glowOpacity = 0.4 + intensity * 0.6;
+  giftGlow.style.inset = `-${glowSize}px`;
+  giftGlow.style.background = `radial-gradient(circle, rgba(255,${Math.floor(100 - intensity*80)},150,${glowOpacity}) 0%, transparent 70%)`;
+  giftSvgWrap.style.filter = `drop-shadow(0 0 ${Math.floor(intensity * 40)}px rgba(255,100,150,${intensity}))`;
+
+  // Show cracks progressively
+  if (tapCount >= 20) crackOverlay.style.opacity = Math.min(1, (tapCount - 20) / 20);
+
+  // Shake more as taps increase
+  if (tapCount >= 30) {
+    const vibration = Math.min(8, (tapCount - 30) * 0.3);
+    giftSvgWrap.style.transform = `rotate(${(Math.random()-0.5)*vibration}deg)`;
+    setTimeout(() => giftSvgWrap.style.transform = '', 100);
+  }
+
+  if (tapCount >= TAP_REQUIRED) {
+    triggerExplosion(cx, cy);
+  }
+}
+
+giftWrapper.addEventListener('click', handleGiftTap);
+giftWrapper.addEventListener('touchstart', handleGiftTap, { passive: false });
+
+function triggerExplosion(cx, cy) {
+  if (giftExploded) return;
+  giftExploded = true;
+  playBirthdayMusic();
+
+  // Flash the screen
+  const flash = document.createElement('div');
+  flash.style.cssText = `position:fixed;inset:0;background:white;z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.1s;`;
+  document.body.appendChild(flash);
+
+  setTimeout(() => flash.style.opacity = '0.9', 10);
+  setTimeout(() => flash.style.opacity = '0', 200);
+  setTimeout(() => document.body.removeChild(flash), 400);
+
+  // Explode gift
+  giftSvgWrap.style.transition = 'transform 0.3s, opacity 0.4s';
+  giftSvgWrap.style.transform = 'scale(1.5)';
+  giftSvgWrap.style.opacity = '0';
+
+  emitExplosion(cx, cy);
+  ambientMode = 'celebrate';
+
+  // Transition to birthday message after delay
+  setTimeout(() => showBirthdayMessage(), 1800);
+}
+
+// ═══════════════════════════════════════════════════
+//  BIRTHDAY MESSAGE REVEAL
+// ═══════════════════════════════════════════════════
+function showBirthdayMessage() {
+  document.getElementById('hbName').textContent = '✨ ' + userName + ' ✨';
+  showScreen('screen-message');
+
+  setTimeout(() => {
+    document.getElementById('hbLine1').classList.add('pop');
+    document.getElementById('hbName').classList.add('pop');
+  }, 100);
+
+  setTimeout(() => {
+    document.getElementById('cakeContainer').classList.add('show');
+  }, 600);
+
+  // Add floating elements
+  spawnCelebrationElements();
+}
+
+function spawnCelebrationElements() {
+  const msgScreen = document.getElementById('screen-message');
+  const emojis = ['🎈','🎉','🎊','💖','⭐','✨','🌸','🦋','💫'];
+
+  for (let i = 0; i < 20; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'float-el';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + '%';
+      el.style.animationDuration = (Math.random() * 8 + 6) + 's';
+      el.style.animationDelay = (Math.random() * 4) + 's';
+      el.style.fontSize = (Math.random() * 16 + 16) + 'px';
+      msgScreen.appendChild(el);
+    }, i * 200);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  WEB AUDIO – Happy Birthday
+// ═══════════════════════════════════════════════════
+function playBirthdayMusic() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ac = new AudioCtx();
+    const master = ac.createGain();
+    master.gain.setValueAtTime(0, ac.currentTime);
+    master.gain.linearRampToValueAtTime(0.4, ac.currentTime + 0.3);
+    master.connect(ac.destination);
+
+    // Reverb via convolver
+    const conv = ac.createConvolver();
+    const rLen = ac.sampleRate * 2.5;
+    const rBuf = ac.createBuffer(2, rLen, ac.sampleRate);
+    for (let c = 0; c < 2; c++) {
+      const d = rBuf.getChannelData(c);
+      for (let i = 0; i < rLen; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / rLen, 3);
+    }
+    conv.buffer = rBuf;
+    const reverbGain = ac.createGain(); reverbGain.gain.value = 0.25;
+    master.connect(reverbGain); reverbGain.connect(conv); conv.connect(ac.destination);
+
+    function note(freq, start, dur, vol = 0.5) {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, ac.currentTime + start);
+      gain.gain.linearRampToValueAtTime(vol, ac.currentTime + start + 0.02);
+      gain.gain.setValueAtTime(vol, ac.currentTime + start + dur - 0.05);
+      gain.gain.linearRampToValueAtTime(0, ac.currentTime + start + dur);
+      osc.connect(gain); gain.connect(master);
+      osc.start(ac.currentTime + start);
+      osc.stop(ac.currentTime + start + dur + 0.1);
+    }
+
+    // Happy Birthday melody (C major)
+    const C4=261.63, D4=293.66, E4=329.63, F4=349.23, G4=392, A4=440, B4=493.88,
+          C5=523.25, D5=587.33, E5=659.25, F5=698.46, G5=784, A5=880;
+
+    const melody = [
+      // "Hap-py Birth-day to you"
+      [C4,0,0.25],[C4,0.3,0.2],[D4,0.55,0.5],[C4,1.1,0.5],[F4,1.65,0.5],[E4,2.2,1.0],
+      // "Hap-py Birth-day to you"
+      [C4,3.3,0.25],[C4,3.6,0.2],[D4,3.85,0.5],[C4,4.4,0.5],[G4,4.95,0.5],[F4,5.5,1.1],
+      // "Hap-py Birth-day dear [name]"
+      [C4,6.7,0.25],[C4,7.0,0.2],[C5,7.25,0.5],[A4,7.8,0.5],[F4,8.35,0.45],[E4,8.85,0.45],[D4,9.35,1.0],
+      // "Hap-py Birth-day to you"
+      [A4,10.45,0.25],[A4,10.75,0.2],[G4,11.0,0.5],[F4,11.55,0.5],[G4,12.1,0.5],[F4,12.65,1.4],
+    ];
+
+    melody.forEach(([freq, start, dur]) => note(freq, start, dur, 0.45));
+
+    // Bass line
+    const bass = [
+      [C4*0.5,0,0.8],[F4*0.5,1.1,0.8],[C4*0.5,2.5,0.8],[F4*0.5,3.3,0.8],
+      [G4*0.5,4.4,0.8],[C4*0.5,5.5,0.8],[F4*0.5,6.7,0.8],[A4*0.5,8.35,0.8],
+      [D4*0.5,9.35,0.8],[G4*0.5,10.45,0.8],[C4*0.5,11.55,0.8],[F4*0.5,12.65,1.5],
+    ];
+    bass.forEach(([freq, start, dur]) => {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, ac.currentTime + start);
+      gain.gain.linearRampToValueAtTime(0.25, ac.currentTime + start + 0.05);
+      gain.gain.setValueAtTime(0.25, ac.currentTime + start + dur - 0.1);
+      gain.gain.linearRampToValueAtTime(0, ac.currentTime + start + dur);
+      osc.connect(gain); gain.connect(master);
+      osc.start(ac.currentTime + start);
+      osc.stop(ac.currentTime + start + dur + 0.1);
+    });
+
+    // Fade out at end
+    master.gain.setValueAtTime(0.4, ac.currentTime + 13);
+    master.gain.linearRampToValueAtTime(0, ac.currentTime + 15);
+
+  } catch(e) {
+    console.warn('Audio not available:', e);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  GIFT SCREEN AMBIENT PARTICLES
+// ═══════════════════════════════════════════════════
+// Floating dust on gift screen
+setInterval(() => {
+  if (ambientMode === 'gift') {
+    for (let i = 0; i < 2; i++) {
+      const p = new Particle(Math.random() * canvas.width, canvas.height + 10, 'glitter');
+      p.speedY = -(Math.random() * 0.6 + 0.2);
+      p.speedX = (Math.random() - 0.5) * 0.5;
+      p.size = Math.random() * 3 + 1;
+      p.decay = 0.002;
+      particles.push(p);
+    }
+  }
+}, 200);
+</script>
+</body>
+</html>
